@@ -1,1 +1,12 @@
 .python-version
+.idea/encodings.xml
+.idea/misc.xml
+.idea/modules.xml
+.idea/scopes/scope_settings.xml
+.idea/stones.iml
+.idea/vcs.xml
+.idea/.name
+.idea/workspace.xml
+virt_env/
+
+
