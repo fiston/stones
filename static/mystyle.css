@@ -1,0 +1,121 @@
+body{
+background-color: #909090;
+}
+
+.top_header{
+	background-color:#B00000   ;
+	width: 100%;
+
+}
+
+.menu{
+
+	font: Tahoma;
+	/**background-color: green;**/
+	margin-left: 17%;
+	margin-top: 5%;
+}
+
+ ul {
+
+padding: 0% 1%;
+border-color: #A00000 ;
+bottom: 0%;
+
+}
+
+li {
+	display: inline-block;
+	padding: 0.6% 2%;
+	background-color: #A00000;
+	border-radius: 5%;
+	bottom: 1%;
+	font-family: Times New Roman;
+	font-size: 18px;
+	font-weight: bold;
+	font: white;
+	border: 2px solid #580000 ;
+
+}
+
+a{<form method="POST" action="<?php echo $SCRIPT_NAME ?>">
+
+</form>
+text-decoration: none;
+}
+a:link    {
+	color:#000000; background-color:transparent; text-decoration:none
+	}
+a:visited {
+	color: blue; background-color:transparent; text-decoration:none
+	}
+a:hover   {
+	color:#ff0000; background-color:transparent; text-decoration:underline
+	}
+a:active  {
+	color:#ff0000; background-color:transparent; text-decoration:underline
+	}
+
+	.search{
+	margin-left: 80%;
+	}
+
+
+.body{
+	background-color:#909090;
+	margin-left: 18%;
+	width: 100%;
+}
+.body_left1{
+	margin-left: 18%;
+	width: 18%;
+	background-color: #F0F0F0;
+}
+
+.body_left2{
+		margin-left: 18%;
+		width: 18%;
+		background-color: #F0F0F0 ;
+
+}
+
+.body_left3{
+		margin-left: 18%;
+		width: 18%;
+		background-color: #F0F0F0 ;
+}
+
+.body_left4{
+		margin-left: 18%;
+		width: 18%;
+		background-color: #F0F0F0 ;
+}
+.body_left5{
+	margin-left: 18%;
+		width: 18%;
+		background-color: #F0F0F0 ;
+}
+
+.body_center{
+	margin-left: 37%;
+	top: 22.5%;
+	position: absolute;
+}
+
+img{
+width: 50%;
+}
+
+h2{
+background-color: red;
+}
+.footer{
+	background-color:#CC66CC;
+	width: 100%;
+}
+
+.footer_span{
+	margin-left: 50%;
+
+}
+}
