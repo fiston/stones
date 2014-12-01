@@ -7,7 +7,7 @@ Index
 {% block content %}
 <div class="container">
 <div class="page-header">
-<h2>Welcome to Technical School</h2>
+<h2>Welcome to Technical {{name}}</h2>
 </div>
 <div class="row">
   <div class="col-md-6"><h1>Ubuyobozi bw'Ishuri</h1></div>
