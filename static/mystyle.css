@@ -8,17 +8,31 @@ background-color: #909090;
 
 }
 
+.my_footer{
+	background-color:#B00000   ;
+	width: 65%;
+	bottom:0px;
+	position:absolute;
+
+}
+
 .menu{
 
 	font: Tahoma;
-	/**background-color: green;**/
-	margin-left: 17%;
+	background-color: green;
+
+.my_size{
+margin-left: 18%;
+}
+
+
 	margin-top: 5%;
 }
 
  ul {
-
-padding: 0% 1%;
+width:1154;
+height:40px,
+padding: 0% 5%;
 border-color: #A00000 ;
 bottom: 0%;
 
@@ -26,7 +40,7 @@ bottom: 0%;
 
 li {
 	display: inline-block;
-	padding: 0.6% 2%;
+	padding: 0.6% 3%;
 	background-color: #A00000;
 	border-radius: 5%;
 	bottom: 1%;
@@ -38,7 +52,7 @@ li {
 
 }
 
-a{<form method="POST" action="<?php echo $SCRIPT_NAME ?>">
+
 
 </form>
 text-decoration: none;
@@ -60,62 +74,3 @@ a:active  {
 	margin-left: 80%;
 	}
 
-
-.body{
-	background-color:#909090;
-	margin-left: 18%;
-	width: 100%;
-}
-.body_left1{
-	margin-left: 18%;
-	width: 18%;
-	background-color: #F0F0F0;
-}
-
-.body_left2{
-		margin-left: 18%;
-		width: 18%;
-		background-color: #F0F0F0 ;
-
-}
-
-.body_left3{
-		margin-left: 18%;
-		width: 18%;
-		background-color: #F0F0F0 ;
-}
-
-.body_left4{
-		margin-left: 18%;
-		width: 18%;
-		background-color: #F0F0F0 ;
-}
-.body_left5{
-	margin-left: 18%;
-		width: 18%;
-		background-color: #F0F0F0 ;
-}
-
-.body_center{
-	margin-left: 37%;
-	top: 22.5%;
-	position: absolute;
-}
-
-img{
-width: 50%;
-}
-
-h2{
-background-color: red;
-}
-.footer{
-	background-color:#CC66CC;
-	width: 100%;
-}
-
-.footer_span{
-	margin-left: 50%;
-
-}
-}
