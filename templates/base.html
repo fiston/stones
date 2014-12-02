@@ -1,5 +1,9 @@
 {% extends "bootstrap/base.html" %}
 {% block title %}stones{% endblock %}
+{%- block styles %}
+{{ super() }}
+<link href="{{ url_for('static', filename='css/main.css') }}'" rel="stylesheet" media="screen">
+{%- endblock styles %}
 {% block navbar %}
 <div class="navbar navbar-default" role="navigation">
     <div class="container">
@@ -15,11 +19,11 @@
         </div>
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-                <li><a href="/">Home</a></li>
-                <li><a href="/">About</a></li>
-                <li><a href="/">Services</a></li>
-                <li><a href="/">Contact</a></li>
-                <li><a href="/">Login</a></li>
+                <li><a href="{{ url_for('home') }}">Home</a></li>
+                <li><a href="{{ url_for('about') }}">About</a></li>
+                <li><a href="{{ url_for('service') }}">Services</a></li>
+                <li><a href="{{ url_for('contact') }}">Contact</a></li>
+                <li><a href="{{ url_for('login') }}">Login</a></li>
             </ul>
         </div>
     </div>
@@ -31,18 +35,13 @@
 
 
     {% endblock %}
+
+
+<div class="footer navbar navbar-default navbar-fixed-bottom" >
+    <div class = "container">
+        <center></center><p> &copy; Copyright Stone 2014. -Powered by Ventum11</p>
+    </div>
+
+{% endblock %}
+
 </div>
-
-<div class="navbar navbar-default navbar-fixed-bottom" >
-<div class = "container">
-<p> &copy; Copyright Stone 2014. -Powered by Ventum11</p>
-</div>
-</div>
-
-
-
-
-
-    {% endblock %}
-
-
