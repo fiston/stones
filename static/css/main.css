@@ -1,3 +1,22 @@
-.ul{
+.navigation{
+position:relative;
+top:25%;
 background-color:orange;
+}
+
+.container_all{
+background-color:#F5F5DC;
+
+
+}
+
+.footer{
+background-color:gray;
+position:relative
+bottom:0px;
+}
+
+.message{
+width: 300px;
+ height: 150px;
 }

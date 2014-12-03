@@ -2,10 +2,10 @@
 {% block title %}stones{% endblock %}
 {%- block styles %}
 {{ super() }}
-<link href="{{ url_for('static', filename='css/main.css') }}'" rel="stylesheet" media="screen">
+<link href="{{ url_for('static', filename='css/main.css') }}" rel="stylesheet" media="screen">
 {%- endblock styles %}
 {% block navbar %}
-<div class="navbar navbar-default" role="navigation">
+<div class="navigation navbar navbar-default" role="navigation">
     <div class="container">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle"
@@ -37,11 +37,7 @@
     {% endblock %}
 
 
-<div class="footer navbar navbar-default navbar-fixed-bottom" >
-    <div class = "container">
-        <center></center><p> &copy; Copyright Stone 2014. -Powered by Ventum11</p>
-    </div>
-
-{% endblock %}
 
 </div>
+  {% endblock %}
+

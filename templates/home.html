@@ -1,30 +1,26 @@
 {% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
 {% block title %}Home{% endblock %}
-{% block navbar %}
-<div class="navbar navbar-default" role="navigation">
-    <div class="container">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle"
-                    data-toggle="collapse" data-target=".navbar-collapse">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="/">Stones Logo</a>
-        </div>
-        <div class="navbar-collapse collapse">
-            <ul class="nav navbar-nav">
-                <li><a href="{{ url_for('home') }}">Home</a></li>
-                <li><a href="{{ url_for('about') }}">About</a></li>
-                <li><a href="{{ url_for('service') }}">Services</a></li>
-                <li><a href="{{ url_for('contact') }}">Contact</a></li>
-                <li><a href="{{ url_for('login') }}">Login</a></li>
-            </ul>
-        </div>
+
+{% block content %}
+<div class="container_all container">
+    I love you all
+    {% block page_content %}
+    <div class="page-header">
+        <h1>Hello, {% if name %}{{ name }}, you said you are {{ age }} old\n
+            email sent to us is: {{ email }}{% else %}Stranger{% endif %}!</h1>
     </div>
+    {{ wtf.quick_form(form) }}
+    {% endblock %}
+
+</div>
+<div class="footer navbar navbar-default" >
+    <div class = "container">
+        <center><p> &copy; Copyright Stone 2014. -Powered by Ventum11</p></center>
+    </div>
+
+
+
 </div>
 {% endblock %}
-{% block page_content %}
-<h1>Homepage</h1>
-{% endblock %}
+
