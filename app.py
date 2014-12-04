@@ -37,6 +37,7 @@ def home():
 @app.route('/about')
 def about():
     return render_template('about.html')
+
 @app.route('/contact')
 def contact():
     form = ContactForm()
@@ -63,8 +64,8 @@ class NameForm(Form):
     submit = SubmitField('Submit')
 
 class ContactForm(Form):
+    name = StringField("Name:", validators=[DataRequired()])
     email = StringField("Email:", validators=[Email()])
-    name = StringField("What is your name?", validators=[DataRequired()])
     message = TextAreaField("Message:", validators=[DataRequired()])
 
     submit = SubmitField('Submit')

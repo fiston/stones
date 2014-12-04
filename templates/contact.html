@@ -2,11 +2,32 @@
 {% import "bootstrap/wtf.html" as wtf %}
 {% block title %}Home{% endblock %}
 {% block page_content %}
-        Contact Us <br/>
+
 <div class="row">
-  <div class="col-md-3"></div>
-  <div class="col-md-6">{{ wtf.quick_form(form) }}</div>
-  <div class="col-md-3"></div>
+    <div class="col-md-2"></div>
+    <div class="col-md-8"><center>To contact Us, fill the form below </center> <br/><br/>
+        <form action="" method='POST'>
+
+
+            {% for field in form %}
+            <div class="row">
+                <div class="col-md-3">
+                   {{field.label}}
+
+
+
+                </div>
+                <div class="col-md-5">
+                    {{field}}
+                </div>
+            </div>
+            {% endfor %}
+
+
+
+        </form></div>
+</div>
+<div class="col-md-2"></div>
 </div>
 
 
