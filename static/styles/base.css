@@ -1,0 +1,22 @@
+html, body {
+    height: 100%;
+}
+
+.contents {
+    min-height: 100%; // the heigh of the window itself
+    margin-top: -50px; // remove the navigation height using margin
+    padding-top: 50px; // add padding so that the content inside can be seen
+    margin-bottom: -100px; // remove the footer height using margin
+    padding-bottom: 100px; // add padding so that the content on the bottom shown
+}
+
+.stones-footer {
+    padding: 10px 15px;
+    min-height: 100px;
+}
+
+.stones-default {
+    background-color: #f8f8f8;
+    border-color: #e7e7e7;
+}    
+
