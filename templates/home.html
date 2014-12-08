@@ -13,10 +13,10 @@
       </div>
     </div>
     {% else %}
-    <div class="form-group">
+    <div class="form-group {% if field.errors %}has-error{% endif %}">
       <div class="col-sm-2">
         <label for="{{field.name}}" class="control-label">
-          {% if field.widget.input_type != 'hidden' and field.type != 'SubmitField' %}
+          {% if field.widget.input_type != 'hidden' %}
           {{field.label}}
           {% endif %}
         </label>        
@@ -25,6 +25,9 @@
       <div class="col-sm-6">
         {{field(class="form-control")}}
         <span id="helpBlock" class="help-block">{{field.description}}</span>
+        {% for error in field.errors %}
+        <span id="helpBlock" class="help-block">{{error}}</span>
+        {% endfor %}
       </div>
     </div>
     {% endif %}
