@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
-{% block title %}Home{% endblock %}
+{% block title %}registration{% endblock %}
 {% block page_content %}
-<h1>Get in touch with Us</h1>
-<form class="form-horizontal" role="form" method="post" action="{{url_for('contact')}}">
-  {{ contact_form.hidden_tag() }}
-  {% for field in contact_form %}
+<h1>Registration Form</h1>
+<form class="form-horizontal" role="form" method="post" action="{{url_for('register')}}">
+  {{ register_form.hidden_tag() }}
+  {% for field in register_form %}
   <div class="row">
     {% if field.type == 'SubmitField' %}
     <div class="form-group">
