@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% import "util_macros.html" as utils %}
+
+{% block page_content %}
+{{utils.training_form(form, action=url_for('register'))}}
+{% endblock %}

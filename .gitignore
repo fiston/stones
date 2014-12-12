@@ -1,1 +1,4 @@
+*.db
+*.backup
 .python-version
+__pycache__/
