@@ -118,7 +118,7 @@ class RegisterForm(Form):
     confirm = PasswordField('Confirm', description="Please retype your password",
                        validators=[DataRequired()])
     # role = SelectField(choices=[('1', 'Administrator'), ('2', 'Moderator'), ('3', 'Staff')])
-    # role = SelectField(choices= [(str(_.id),str(_.name)) for _ in Role.query.all()],validators=[DataRequired()])
+    role = SelectField(choices= [(str(_.id),str(_.name)) for _ in Role.query.all()],validators=[DataRequired()])
     name = StringField('Name', description="Please enter your name",
                        validators=[DataRequired()])
     email = StringField('Email', description="Please enter your e-mail",
@@ -135,7 +135,7 @@ def register():
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
         if user is None:
-            user = User(username=form.username.data,password=form.password.data,name=form.name.data,email=form.email.data,telephone=form.telephone.data)
+            user = User(username=form.username.data,password=form.password.data,name=form.name.data,email=form.email.data,telephone=form.telephone.data,role_id=form.role.data)
             db.session.add(user)
             flash("user %s was added successfully. Now you can login with your credentials"%user.name,'alert-success')
         else:
