@@ -5,17 +5,19 @@ from flask_script import Manager
 from flask_bootstrap import Bootstrap
 from flask_wtf import Form
 from wtforms import StringField, SubmitField,TextAreaField,PasswordField,IntegerField,SelectField,FieldList,TextField,ValidationError
-
 from wtforms.validators import DataRequired,Email,Length,EqualTo
 from flask import Flask, render_template,session,redirect,url_for,flash
 from flask_sqlalchemy import SQLAlchemy
 import os,re
 from utils import *
 
+app = Flask(__name__)
+
+# ================  GENERAL CONFIGURATIONS ==============
+app.config['SECRET_KEY'] = SingleKeyGenerator(200).key
+
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-app = Flask(__name__)
-app.config['SECRET_KEY'] = SingleKeyGenerator(200).key
 app.config['SQLALCHEMY_DATABASE_URI'] =\
 'sqlite:///' + os.path.join(basedir, 'data.db')
 app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
@@ -23,12 +25,10 @@ db = SQLAlchemy(app)
 manager = Manager(app)
 app.config['BOOTSTRAP_SERVE_LOCAL'] = True
 bootstrap = Bootstrap(app)
+# ================= END GENERAL CONFIGURATIONS ===========
 
-class NameForm(Form):
-    name = StringField('Name', description="Please enter your name",
-                       validators=[DataRequired()])
-    submit = SubmitField('Send')
 
+# ===================   FORMS =========================
 class LoginForm(Form):
     username = StringField('username', description="Please enter your username",
                        validators=[DataRequired()])
@@ -36,6 +36,22 @@ class LoginForm(Form):
                        validators=[DataRequired()])
     submit = SubmitField('Login')
 
+class RegisterForm(Form):
+    username = StringField('username', description="Please choose your username",
+                       validators=[DataRequired()])
+    password = PasswordField('password', description="Please choose your password",
+                       validators=[DataRequired(),Length(min=6),EqualTo('confirm', message='Passwords mismatch! Please retype your password and confirm it correctly!'),Password()])
+    confirm = PasswordField('Confirm', description="Please retype your password",
+                       validators=[DataRequired()])
+    # role = SelectField(choices=[('1', 'Administrator'), ('2', 'Moderator'), ('3', 'Staff')])
+    role = SelectField(choices= [(str(_.id),str(_.name)) for _ in Role.query.all()],validators=[DataRequired()])
+    name = StringField('Name', description="Please enter your name",
+                       validators=[DataRequired()])
+    email = StringField('Email', description="Please enter your e-mail",
+                       validators=[Email()])
+    telephone = StringField('telephone', description="Please enter your phone number",
+                       validators=[DataRequired()])
+    submit = SubmitField('Register')
 
 class ContactForm(Form):
     name = StringField('Name', description="Please enter your name",
@@ -46,6 +62,15 @@ class ContactForm(Form):
                        validators=[DataRequired()])
     submit = SubmitField('Send')
 
+class RoleForm(Form):
+    role_name = StringField('role name', description="Enter a role name",
+                       validators=[DataRequired()])
+    submit = SubmitField('role')
+
+# ==================== END FORMS ===================
+
+
+# ===================== VIEWS ========================
 @app.route('/', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
@@ -73,9 +98,6 @@ def home():
 
     return render_template('home.html')
 
-
-
-
 @app.route('/contact', methods=['GET', 'POST'])
 def contact():
     name = None
@@ -87,47 +109,6 @@ def contact():
         email = form.email.data; form.email.data = ''
         message = form.message.data; form.message.data = ''
     return render_template('contact.html', form=form, name=name,email=email,message=message)
-
-class User(db.Model):
-    __tablename__ = 'users'
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(32), index=True)
-    password = db.Column(db.String(64))
-    name = db.Column(db.String(32))
-    email = db.Column(db.String(32),unique=True)
-    telephone = db.Column(db.String(12))
-    role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
-
-    def __repr__(self):
-        return '<User  %r>' %self.username
-
-class Role(db.Model):
-    __tablename__ = 'roles'
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(32),unique=True)
-    users = db.relationship('User', backref='role')
-
-    def __repr__(self):
-        return '<Role %r>' % self.name
-
-class RegisterForm(Form):
-    username = StringField('username', description="Please choose your username",
-                       validators=[DataRequired()])
-    password = PasswordField('password', description="Please choose your password",
-                       validators=[DataRequired(),Length(min=6),EqualTo('confirm', message='Passwords mismatch! Please retype your password and confirm it correctly!'),Password()])
-    confirm = PasswordField('Confirm', description="Please retype your password",
-                       validators=[DataRequired()])
-    # role = SelectField(choices=[('1', 'Administrator'), ('2', 'Moderator'), ('3', 'Staff')])
-    role = SelectField(choices= [(str(_.id),str(_.name)) for _ in Role.query.all()],validators=[DataRequired()])
-    name = StringField('Name', description="Please enter your name",
-                       validators=[DataRequired()])
-    email = StringField('Email', description="Please enter your e-mail",
-                       validators=[Email()])
-    telephone = StringField('telephone', description="Please enter your phone number",
-                       validators=[DataRequired()])
-    submit = SubmitField('Register')
-
-
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -150,11 +131,6 @@ def register():
         return redirect(url_for('login'))
     return render_template('register.html', form=form)
 
-class RoleForm(Form):
-    role_name = StringField('role name', description="Enter a role name",
-                       validators=[DataRequired()])
-    submit = SubmitField('role')
-
 @app.route('/role', methods=['GET', 'POST'])
 def role():
     form = RoleForm()
@@ -169,16 +145,34 @@ def role():
         form.role_name.data = ''
         return redirect(url_for('register'))
     return render_template('register.html', role_form=form)
+# ================ END VIEWS ============================
 
 
+# ================== MODELS ==============================
+class User(db.Model):
+    __tablename__ = 'users'
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(32), index=True)
+    password = db.Column(db.String(64))
+    name = db.Column(db.String(32))
+    email = db.Column(db.String(32),unique=True)
+    telephone = db.Column(db.String(12))
+    role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
 
-@app.route('/remote_files')
-def remote_files():
-    return render_template('remotefiles.html')
+    def __repr__(self):
+        return '<User  %r>' %self.username
 
+class Role(db.Model):
+    __tablename__ = 'roles'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(32),unique=True)
+    users = db.relationship('User', backref='role')
+
+    def __repr__(self):
+        return '<Role %r>' % self.name
+
+# ================ END MODELS ===========================
 
 if __name__ == '__main__':
     manager.run()
 
-
-    # make user model have username and password.
