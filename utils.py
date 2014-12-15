@@ -1,4 +1,4 @@
-import re
+import re,smtplib
 import binascii
 from os import urandom
 
@@ -33,4 +33,24 @@ class Password(object):
             raise ValidationError(self.message)
 
 
+def email_sender():
+    receivers = ['ventum11@gmail.com']
+    name = raw_input("name: ")
+    email=raw_input('email: ')
+    subject=raw_input('subject: ')
+    content=raw_input('message: ')
+
+    message = """From: %s <%s>
+    To: %s
+    Subject: %s
+
+    %s
+    """%(name,email,receivers,subject,content)
+
+    try:
+       smtpObj = smtplib.SMTP('localhost')
+       smtpObj.sendmail(email, receivers, message)
+       print "Successfully sent email"
+    except:
+        print "Error: unable to send email"
 # print SingleKeyGenerator

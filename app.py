@@ -8,7 +8,7 @@ from wtforms import StringField, SubmitField,TextAreaField,PasswordField,Integer
 from wtforms.validators import DataRequired,Email,Length,EqualTo
 from flask import Flask, render_template,session,redirect,url_for,flash
 from flask_sqlalchemy import SQLAlchemy
-import os,re
+import os,re,smtplib
 from utils import *
 
 app = Flask(__name__)
@@ -27,6 +27,30 @@ app.config['BOOTSTRAP_SERVE_LOCAL'] = True
 bootstrap = Bootstrap(app)
 # ================= END GENERAL CONFIGURATIONS ===========
 
+# ================== MODELS ==============================
+class User(db.Model):
+    __tablename__ = 'users'
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(32), index=True)
+    password = db.Column(db.String(64))
+    name = db.Column(db.String(32))
+    email = db.Column(db.String(32),unique=True)
+    telephone = db.Column(db.String(12))
+    role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
+
+    def __repr__(self):
+        return '<User  %r>' %self.username
+
+class Role(db.Model):
+    __tablename__ = 'roles'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(32),unique=True)
+    users = db.relationship('User', backref='role')
+
+    def __repr__(self):
+        return '<Role %r>' % self.name
+
+# ================ END MODELS ===========================
 
 # ===================   FORMS =========================
 class LoginForm(Form):
@@ -58,6 +82,8 @@ class ContactForm(Form):
                        validators=[DataRequired()])
     email = StringField('Email', description="Please enter your e-mail",
                        validators=[Email()])
+    subject = StringField('Subject', description="Please enter the subject",
+                       validators=[DataRequired()])
     message = TextAreaField('Message', description="Please enter your Message",
                        validators=[DataRequired()])
     submit = SubmitField('Send')
@@ -100,15 +126,28 @@ def home():
 
 @app.route('/contact', methods=['GET', 'POST'])
 def contact():
-    name = None
-    email = None
-    message = None
     form = ContactForm()
     if form.validate_on_submit():
         name = form.name.data; form.name.data = ''
         email = form.email.data; form.email.data = ''
+        subject = form.subject.data; form.subject.data = ''
         message = form.message.data; form.message.data = ''
-    return render_template('contact.html', form=form, name=name,email=email,message=message)
+        receiver = ['ventum11@gmail.com']
+        # content=raw_input('message: ')
+
+        body1 = """From: %s <%s>
+        To: %s
+        Subject: %s
+
+        %s
+        """%(name,email,receiver,subject,message)
+        try:
+           smtpObj = smtplib.SMTP('localhost')
+           smtpObj.sendmail(email,receiver, body1)
+           flash("Successfully sent email",'alert-success')
+        except:
+            flash('Unable to send e-mail. verify your email and check the connection', 'alert-danger')
+    return render_template('contact.html', form=form)
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -148,30 +187,7 @@ def role():
 # ================ END VIEWS ============================
 
 
-# ================== MODELS ==============================
-class User(db.Model):
-    __tablename__ = 'users'
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(32), index=True)
-    password = db.Column(db.String(64))
-    name = db.Column(db.String(32))
-    email = db.Column(db.String(32),unique=True)
-    telephone = db.Column(db.String(12))
-    role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
 
-    def __repr__(self):
-        return '<User  %r>' %self.username
-
-class Role(db.Model):
-    __tablename__ = 'roles'
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(32),unique=True)
-    users = db.relationship('User', backref='role')
-
-    def __repr__(self):
-        return '<Role %r>' % self.name
-
-# ================ END MODELS ===========================
 
 if __name__ == '__main__':
     manager.run()
