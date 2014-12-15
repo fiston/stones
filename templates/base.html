@@ -30,9 +30,9 @@
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
                        aria-expanded="false">Administration <span class="caret"></span></a>
                     <ul class="dropdown-menu" role="menu">
-                        <li><a href="#">Action</a></li>
-                        <li><a href="#">Another action</a></li>
-                        <li><a href="#">Something else here</a></li>
+                        <li><a href="remote_files">remote files</a></li>
+                        <!--<li><a href="#">Another action</a></li>-->
+                        <!--<li><a href="#">Something else here</a></li>-->
                         <li class="divider"></li>
                         <li><a href="#">Separated link</a></li>
                         <li class="divider"></li>
@@ -42,7 +42,7 @@
             </ul>
 
             <p class="navbar-text navbar-center">
-                Hello <a href="#" class="navbar-link">{{ session.get('username','Stranger')}}</a>
+                Hello <a href="#" class="navbar-link">{{ session.get('name','Stranger')}}</a>
             </p>
             <a href='/logout' class="navbar-right"><div class="glyphicon glyphicon-log-out "></div></a>
 
@@ -75,4 +75,5 @@
 
 {% block scripts %}
 {{super()}}
+<script src="{{url_for('static', filename='js/main.js')}}}}"></script>
 {% endblock %}

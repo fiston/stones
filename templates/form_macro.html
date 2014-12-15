@@ -1,0 +1,35 @@
+{% macro myform(form,action="") %}
+        <form class="form-horizontal" role="form" method="post" action={{action}}>
+                            {{ form.hidden_tag() }}
+                            {% for field in form %}
+                            <div class="row">
+                                {% if field.type == 'SubmitField' %}
+                                <div class="form-group">
+                                    <div class="col-sm-2"></div>
+                                    <div class="col-sm-6">
+                                        {{field(class="btn btn-primary")}}
+                                    </div>
+                                </div>
+                                {% else %}
+                                <div class="form-group {% if field.errors %} has-error {% endif %}">
+                                    <div class="col-sm-2">
+                                        <label for="{{field.name}}" class="control-label">
+                                            {% if field.widget.input_type != 'hidden' and field.type != 'SubmitField' %}
+                                            {{field.label}}
+                                            {% endif %}
+                                        </label>
+                                    </div>
+
+                                    <div class="col-sm-6">
+                                        {{field(class="form-control")}}
+                                        <span id="helpBlock" class="help-block">{{field.description}}</span>
+                                        {% for error in field.errors %}
+                                        <span id="helpBlock" class="help-block ">{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+                            {% endfor %}
+                        </form>
+ {% endmacro %}

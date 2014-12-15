@@ -25,7 +25,7 @@ html, body {
 
 
 
-/* Contact form */
+/* Contact form
 form label {
   font-size: 1.2em;
   font-weight: bold;
@@ -34,6 +34,8 @@ form label {
 }
 form input#username,
 form input#password,
+form input#confirm,
+form input#role,
 form input#name,
 form input#age,
 form input#email,
@@ -91,4 +93,4 @@ form input#submit:hover{
   background-image: -ms-linear-gradient(top, #dbdbdb, #cccccc);
   background-image: -o-linear-gradient(top, #dbdbdb, #cccccc);
   background-image: linear-gradient(top, #dbdbdb, #cccccc);filter:progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr=#dbdbdb, endColorstr=#cccccc);
-}
+}*/

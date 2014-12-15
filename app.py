@@ -4,23 +4,25 @@
 from flask_script import Manager
 from flask_bootstrap import Bootstrap
 from flask_wtf import Form
-from wtforms import StringField, SubmitField,TextAreaField,PasswordField
-from wtforms.validators import DataRequired,Email
+from wtforms import StringField, SubmitField,TextAreaField,PasswordField,IntegerField,SelectField,FieldList,TextField,ValidationError
+
+from wtforms.validators import DataRequired,Email,Length,EqualTo
 from flask import Flask, render_template,session,redirect,url_for,flash
 from flask_sqlalchemy import SQLAlchemy
-import os
+import os,re
+from utils import *
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = '*&^&^786&^$#%$##$@!@#~!@~@#?><?></.,./7*&6%^$$54343$#FFGHv@##2xgh===_+);;,/,.<><{]P{}}|{]::'
+app.config['SECRET_KEY'] = SingleKeyGenerator(200).key
 app.config['SQLALCHEMY_DATABASE_URI'] =\
-'sqlite:///' + os.path.join(basedir, 'data.sqlite')
+'sqlite:///' + os.path.join(basedir, 'data.db')
 app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
 db = SQLAlchemy(app)
 manager = Manager(app)
+app.config['BOOTSTRAP_SERVE_LOCAL'] = True
 bootstrap = Bootstrap(app)
-
 
 class NameForm(Form):
     name = StringField('Name', description="Please enter your name",
@@ -32,7 +34,7 @@ class LoginForm(Form):
                        validators=[DataRequired()])
     password = PasswordField('password', description="Enter a valid password",
                        validators=[DataRequired()])
-    submit = SubmitField('Send')
+    submit = SubmitField('Login')
 
 
 class ContactForm(Form):
@@ -44,11 +46,79 @@ class ContactForm(Form):
                        validators=[DataRequired()])
     submit = SubmitField('Send')
 
+@app.route('/', methods=['GET', 'POST'])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(username=form.username.data,password=form.password.data).first()
+        if user:
+            flash('Successfully loged in!','alert-success')
+            session['name'] = user.name
+            return render_template('home.html')
+        else:
+            form.username.data = ''
+            form.password.data = ''
+            flash('Incorrect username or password!','alert-danger')
+            return redirect(url_for('login'))
+
+    return render_template('login.html', form=form)
+
+@app.route('/logout', methods=['GET', 'POST'])
+def logout():
+    session.pop('name',None)
+    return redirect(url_for('login'))
+
+@app.route('/home', methods=['GET', 'POST'])
+def home():
+
+    return render_template('home.html')
+
+
+
+
+@app.route('/contact', methods=['GET', 'POST'])
+def contact():
+    name = None
+    email = None
+    message = None
+    form = ContactForm()
+    if form.validate_on_submit():
+        name = form.name.data; form.name.data = ''
+        email = form.email.data; form.email.data = ''
+        message = form.message.data; form.message.data = ''
+    return render_template('contact.html', form=form, name=name,email=email,message=message)
+
+class User(db.Model):
+    __tablename__ = 'users'
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(32), index=True)
+    password = db.Column(db.String(64))
+    name = db.Column(db.String(32))
+    email = db.Column(db.String(32),unique=True)
+    telephone = db.Column(db.String(12))
+    role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
+
+    def __repr__(self):
+        return '<User  %r>' %self.username
+
+class Role(db.Model):
+    __tablename__ = 'roles'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(32),unique=True)
+    users = db.relationship('User', backref='role')
+
+    def __repr__(self):
+        return '<Role %r>' % self.name
+
 class RegisterForm(Form):
     username = StringField('username', description="Please choose your username",
                        validators=[DataRequired()])
-    password = StringField('password', description="Please choose your password",
+    password = PasswordField('password', description="Please choose your password",
+                       validators=[DataRequired(),Length(min=6),EqualTo('confirm', message='Passwords mismatch! Please retype your password and confirm it correctly!'),Password()])
+    confirm = PasswordField('Confirm', description="Please retype your password",
                        validators=[DataRequired()])
+    # role = SelectField(choices=[('1', 'Administrator'), ('2', 'Moderator'), ('3', 'Staff')])
+    # role = SelectField(choices= [(str(_.id),str(_.name)) for _ in Role.query.all()],validators=[DataRequired()])
     name = StringField('Name', description="Please enter your name",
                        validators=[DataRequired()])
     email = StringField('Email', description="Please enter your e-mail",
@@ -58,92 +128,57 @@ class RegisterForm(Form):
     submit = SubmitField('Register')
 
 
-@app.route('/', methods=['GET', 'POST'])
-def login():
-    username = None
-    password = None
-    login_form = LoginForm()
-
-    if login_form.validate_on_submit():
-        username = login_form.username.data
-        password = login_form.password.data
-        if username=='ventum'  and password == '123':
-            flash('Successfully loged in!','alert-success')
-            return render_template('home.html', login_form=login_form, username=session.get('username'))
-        else:
-            login_form.username.data = ''
-            login_form.password.data = ''
-            flash('Incorrect username or password!','alert-error')
-            return redirect(url_for('login'))
-    return render_template('login.html', login_form=login_form)
-
-@app.route('/logout', methods=['GET', 'POST'])
-def logout():
-    return redirect(url_for('login'))
-
-@app.route('/home', methods=['GET', 'POST'])
-def home():
-    name = None
-    form = NameForm()
-
-    if form.validate_on_submit():
-        old_name = session.get('name')
-        if old_name is not None and old_name != form.name.data:
-            flash('Your name has been changed succeffully!')
-        session['name'] = form.name.data
-        form.name.data = ''
-        return redirect(url_for('home'))
-    return render_template('home.html', form=form)
-
-
-
-@app.route('/contact', methods=['GET', 'POST'])
-def contact():
-    name = None
-    email = None
-    message = None
-    contact_form = ContactForm()
-    if contact_form.validate_on_submit():
-        name = contact_form.name.data; contact_form.name.data = ''
-        email = contact_form.email.data; contact_form.email.data = ''
-        message = contact_form.message.data; contact_form.message.data = ''
-    return render_template('contact.html', contact_form=contact_form, name=name,email=email,message=message)
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    username = None
-    password = None
-    name = None
-    email = None
-    telephone = None
+    form = RegisterForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(username=form.username.data).first()
+        if user is None:
+            user = User(username=form.username.data,password=form.password.data,name=form.name.data,email=form.email.data,telephone=form.telephone.data)
+            db.session.add(user)
+            flash("user %s was added successfully. Now you can login with your credentials"%user.name,'alert-success')
+        else:
+            flash("user %s already exists! please add a new one"%user.name,'alert-danger')
+            return redirect(url_for('register'))
+        form.username.data = ''
+        form.password.data = ''
+        # register_form.role.data = ''
+        form.name.data = ''
+        form.email.data = ''
+        form.telephone.data = ''
+        return redirect(url_for('login'))
+    return render_template('register.html', form=form)
 
-    register_form = RegisterForm()
-    if register_form.validate_on_submit():
-        username = register_form.username.data; register_form.username.data = ''
-        password = register_form.password.data; register_form.password.data = ''
-        name = register_form.name.data; register_form.name.data = ''
-        email = register_form.email.data; register_form.email.data = ''
-        telephone = register_form.telephone.data; register_form.telephone.data = ''
-    return render_template('register.html', register_form=register_form, username=username,password=password,name=name,email=email,telephone=telephone)
+class RoleForm(Form):
+    role_name = StringField('role name', description="Enter a role name",
+                       validators=[DataRequired()])
+    submit = SubmitField('role')
 
-class Role(db.Model):
-    __tablename__ = 'roles'
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(64),unique=True)
-    users = db.relationship('User', backref='role')
+@app.route('/role', methods=['GET', 'POST'])
+def role():
+    form = RoleForm()
+    if form.validate_on_submit():
+        role = User.query.filter_by(username=form.rolename.data).first()
+        if role is None:
+            role = Role(role_name=form.role_name.data)
+            db.session.add(role)
+            flash("Role %s was added successfully"%role.name,'alert-success')
+        else:
+            flash("Role %s already exists! please add a new one"%role.name,'alert-danger')
+        form.role_name.data = ''
+        return redirect(url_for('register'))
+    return render_template('register.html', role_form=form)
 
-    def __repr__(self):
-        return '<Role is : %r>' % self.name
 
-class User(db.Model):
-    __tablename__ = 'users'
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(64), unique=True, index=True)
-    role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
 
-    def __repr__(self):
-        return '<User is : %r>' %self.username
+@app.route('/remote_files')
+def remote_files():
+    return render_template('remotefiles.html')
 
 
 if __name__ == '__main__':
     manager.run()
+
+
+    # make user model have username and password.

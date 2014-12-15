@@ -1,5 +1,7 @@
 {% extends "bootstrap/base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
+{% import 'form_macro.html' as form_macro %}
+
 {% block title %}Login{% endblock %}
 {% block styles %}
 {{super()}}
@@ -7,65 +9,33 @@
 {% endblock %}
 {% block content %}
 <div class="row">
-    <div class="col-md-4"></div>
-    <div class="col-md-4">
-
+    <div class="col-md-3"></div>
+    <div class="col-md-6">
+        {% for category,message in get_flashed_messages(with_categories=true) %}
+        <div class="alert {{ category }}">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            {{ message }}
+        </div>
+        {% endfor %}
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h3 class="panel-title"><center>Login Here</center></h3>
             </div>
             <div class="panel-body">
 
-                {% for message in get_flashed_messages() %}
-                <div class="alert alert-danger">
-                    <button type="button" class="close" data-dismiss="alert">&times;</button>
-                    {{ message }}
-                </div>
-                {% endfor %}
+
 
                 <div class="row">
-                    <div class="col-md-2"></div>
-                    <div class="col-md-9">
-
-                        <form class="form-horizontal" role="form" method="post" action="{{url_for('login')}}">
-                            {{ login_form.hidden_tag() }}
-                            {% for field in login_form %}
-                            <div class="row">
-                                {% if field.type == 'SubmitField' %}
-                                <div class="form-group">
-                                    <div class="col-sm-2"></div>
-                                    <div class="col-sm-6">
-                                        {{field(class="btn btn-primary")}}
-                                    </div>
-                                </div>
-                                {% else %}
-                                <div class="form-group {% if field.errors %} has-error {% endif %}">
-                                    <div class="col-sm-2">
-                                        <label for="{{field.name}}" class="control-label">
-                                            {% if field.widget.input_type != 'hidden' and field.type != 'SubmitField' %}
-                                            {{field.label}}
-                                            {% endif %}
-                                        </label>
-                                    </div>
-
-                                    <div class="col-sm-6">
-                                        {{field(class="form-control")}}
-                                        <span id="helpBlock" class="help-block">{{field.description}}</span>
-                                        {% for error in field.errors %}
-                                        <span id="helpBlock" class="help-block ">{{ error }}</span>
-                                        {% endfor %}
-                                    </div>
-                                </div>
-                                {% endif %}
-                            </div>
-                            {% endfor %}
-                        </form>
-                    </div>
                     <div class="col-md-1"></div>
+                    <div class="col-md-11">
+
+                        {{ form_macro.myform(form,action=url_for('login')) }}
+                    </div>
+                    <div class="col-md-0"></div>
                 </div>
 
             </div>
-            <div class="col-md-4"></div>
+            <div class="col-md-3"></div>
         </div>
     </div>
 </div>
