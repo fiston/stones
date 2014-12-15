@@ -1,4 +1,11 @@
 {% extends "bootstrap/base.html" %}
+{% block head %}
+{{ super() }}
+<link rel="shortcut icon" href="{{ url_for('static', filename = 'images/stone.jpg') }}"
+      type="image/x-icon">
+<link rel="icon" href="{{ url_for('static', filename = 'images/stone.jpg') }}"
+      type="image/x-icon">
+{% endblock %}
 {% import "bootstrap/wtf.html" as wtf %}
 {% import 'form_macro.html' as form_macro %}
 
@@ -30,6 +37,7 @@
                     <div class="col-md-11">
 
                         {{ form_macro.myform(form,action=url_for('login')) }}
+
                     </div>
                     <div class="col-md-0"></div>
                 </div>
