@@ -35,6 +35,7 @@ class User(db.Model):
     password = db.Column(db.String(64))
     name = db.Column(db.String(32))
     email = db.Column(db.String(32),unique=True)
+    telecom = db.Column(db.String(12))
     telephone = db.Column(db.String(12))
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
 
@@ -74,7 +75,7 @@ class RegisterForm(Form):
     email = StringField('Email', description="Please enter your e-mail",
                        validators=[Email()])
     telephone = StringField('telephone', description="Please enter your phone number",
-                       validators=[DataRequired()])
+                       validators=[DataRequired(),Telephone()])
     submit = SubmitField('Register')
 
 class ContactForm(Form):
@@ -163,7 +164,16 @@ def register():
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
         if user is None:
-            user = User(username=form.username.data,password=form.password.data,name=form.name.data,email=form.email.data,telephone=form.telephone.data,role_id=form.role.data)
+            phone = form.telephone.data
+            if phone.startswith('0788') or phone.startswith('0785') or phone.startswith('0784'):
+                telecom='MTN'
+            elif phone.startswith('072'):
+                telecom='TIGO'
+            elif phone.startswith('073'):
+                telecom='AIRTEL'
+            else:
+                telecom = 'UNKOWN'
+            user = User(username=form.username.data,password=form.password.data,name=form.name.data,email=form.email.data,telecom=telecom,telephone=form.telephone.data,role_id=form.role.data)
             db.session.add(user)
             flash("user %s was added successfully. Now you can login with your credentials"%user.name,'alert-success')
         else:
@@ -171,7 +181,6 @@ def register():
             return redirect(url_for('register'))
         form.username.data = ''
         form.password.data = ''
-        # register_form.role.data = ''
         form.name.data = ''
         form.email.data = ''
         form.telephone.data = ''

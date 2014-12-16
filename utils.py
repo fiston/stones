@@ -32,6 +32,28 @@ class Password(object):
         if not is_complex_pass:
             raise ValidationError(self.message)
 
+class Telephone(object):
+    """
+    makes sure that field data contains atleast
+    lowercase, uppercase, digit and ponctuation letters. Based on what is missing display a custom message
+    """
+
+    def __init__(self, message=None):
+        if not message:
+            message = "The telphone you are using is not registered in Rwanda"
+        self.message = message
+
+    def __call__(self, form, field):
+
+        if (field.data.startswith('0788') or field.data.startswith('0785') or field.data.startswith('0784')) and len(field.data)==10:
+            pass
+        elif field.data.startswith('072') and len(field.data)==10:
+            pass
+        elif field.data.startswith('073') and len(field.data)==10:
+            pass
+        else:
+            raise ValidationError(self.message)
+
 
 def email_sender():
     receivers = ['ventum11@gmail.com']
