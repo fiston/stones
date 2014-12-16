@@ -1,20 +1,30 @@
-{% extends "base.html" %}
+{% extends "bootstrap/base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
 {% import 'form_macro.html' as form_macro %}
 {% block title %}registration{% endblock %}
-{% block page_content %}
-<h1>Registration Form</h1>
+{% block styles %}
+{{super()}}
+<link rel="stylesheet" href="{{url_for('static', filename='css/main.css')}}">
+{% endblock %}
 
-
+{% block content %}
+<div class="container contents">
 <div class="row">{% import 'form_macro.html' as form_macro %}
     <div class="col-md-2"></div>
     <div class="col-md-8">
+        <h1>Registration Form</h1><br/>
         {{ form_macro.myform(form,action=url_for('register')) }}
         <br/>
-        would you like to add
     </div>
     <div class="col-md-2"></div>
 </div>
+</div>
 
-
+        {% block footer %}
+<div class="container-fluid stones-footer stones-default">
+    <div class="container">
+        my footer goes here
+    </div>
+</div>
+{% endblock %}
 {% endblock %}
