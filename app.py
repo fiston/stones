@@ -6,7 +6,7 @@ from flask_bootstrap import Bootstrap
 from flask_wtf import Form
 from wtforms import StringField, SubmitField,TextAreaField,PasswordField,IntegerField,SelectField,FieldList,TextField,ValidationError
 from wtforms.validators import DataRequired,Email,Length,EqualTo
-from flask import Flask, render_template,session,redirect,url_for,flash
+from flask import Flask, render_template,session,redirect,url_for,flash,abort
 from flask_sqlalchemy import SQLAlchemy
 import os,re,smtplib
 from utils import *
@@ -68,7 +68,7 @@ class RegisterForm(Form):
     confirm = PasswordField('Confirm', description="Please retype your password",
                        validators=[DataRequired()])
     # role = SelectField(choices=[('1', 'Administrator'), ('2', 'Moderator'), ('3', 'Staff')])
-    role = SelectField(choices= [(str(_.id),str(_.name)) for _ in Role.query.all()],validators=[DataRequired()])
+    role = SelectField(choices= [(str(_.id),str(_.name)) for _ in Role.query.all()],description="please select the role")
     name = StringField('Name', description="Please enter your name",
                        validators=[DataRequired()])
     email = StringField('Email', description="Please enter your e-mail",
@@ -121,11 +121,18 @@ def logout():
 
 @app.route('/home', methods=['GET', 'POST'])
 def home():
+    if not session.get('name'):
+        flash('Access is denied, please login to access requested page','alert-info')
+        return redirect(url_for('login'))
 
     return render_template('home.html')
 
 @app.route('/contact', methods=['GET', 'POST'])
 def contact():
+    if not session.get('name'):
+        flash('Access is denied, please login to access requested page','alert-info')
+        return redirect(url_for('login'))
+
     form = ContactForm()
     if form.validate_on_submit():
         name = form.name.data; form.name.data = ''
@@ -151,6 +158,7 @@ def contact():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+
     form = RegisterForm()
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
@@ -172,6 +180,10 @@ def register():
 
 @app.route('/role', methods=['GET', 'POST'])
 def role():
+    if not session.get('name'):
+        flash('Access is denied, please login to access requested page','alert-info')
+        return redirect(url_for('login'))
+
     form = RoleForm()
     if form.validate_on_submit():
         role = User.query.filter_by(username=form.rolename.data).first()
@@ -184,6 +196,10 @@ def role():
         form.role_name.data = ''
         return redirect(url_for('register'))
     return render_template('register.html', role_form=form)
+
+@app.errorhandler(404)
+def not_found_404(error):
+    return render_template('404.html'),404
 # ================ END VIEWS ============================
 
 
